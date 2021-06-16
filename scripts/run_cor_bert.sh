@@ -1,0 +1,17 @@
+python train.py --data_dir ./dataset/cnn_correction \
+--transformer_type bert \
+--model_name_or_path bert-base-cased \
+--train_file cor_train_mask.json \
+--dev_file cor_dev_mask.json \
+--test_file cor_dev_mask.json \
+--train_batch_size 4 \
+--test_batch_size 8 \
+--gradient_accumulation_steps 1 \
+--save_path ./ckpt/base_mask \
+--num_labels 4 \
+--learning_rate 3e-5 \
+--max_grad_norm 1.0 \
+--warmup_ratio 0.06 \
+--num_train_epochs 5.0 \
+--seed 66 \
+--num_class 2

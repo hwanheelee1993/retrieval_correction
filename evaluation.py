@@ -15,7 +15,6 @@ def to_official(preds, features):
         h_idx += [ht[0] for ht in hts]
         t_idx += [ht[1] for ht in hts]
         title += [f["title"] for ht in hts]
-
     res = []
     for i in range(preds.shape[0]):
         pred = preds[i]
@@ -68,10 +67,10 @@ def official_evaluate(tmp, path):
     if not os.path.exists(truth_dir):
         os.makedirs(truth_dir)
 
-    fact_in_train_annotated = gen_train_facts(os.path.join(path, "train_annotated.json"), truth_dir)
-    fact_in_train_distant = gen_train_facts(os.path.join(path, "train_distant.json"), truth_dir)
+    fact_in_train_annotated = gen_train_facts(os.path.join(path, "cor_train.json"), truth_dir)
+    fact_in_train_distant = gen_train_facts(os.path.join(path, "cor_train.json"), truth_dir)
 
-    truth = json.load(open(os.path.join(path, "dev.json")))
+    truth = json.load(open(os.path.join(path, "cor_dev.json")))
 
     std = {}
     tot_evidences = 0

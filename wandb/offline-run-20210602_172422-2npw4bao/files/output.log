@@ -1,0 +1,27 @@
+Traceback (most recent call last):
+  File "/home/hwanhee/anaconda3/envs/atlop/lib/python3.7/site-packages/transformers/configuration_utils.py", line 369, in get_config_dict
+    local_files_only=local_files_only,
+  File "/home/hwanhee/anaconda3/envs/atlop/lib/python3.7/site-packages/transformers/file_utils.py", line 950, in cached_path
+    local_files_only=local_files_only,
+  File "/home/hwanhee/anaconda3/envs/atlop/lib/python3.7/site-packages/transformers/file_utils.py", line 1100, in get_from_cache
+    with FileLock(lock_path):
+  File "/home/hwanhee/anaconda3/envs/atlop/lib/python3.7/site-packages/filelock.py", line 323, in __enter__
+    self.acquire()
+  File "/home/hwanhee/anaconda3/envs/atlop/lib/python3.7/site-packages/filelock.py", line 271, in acquire
+    self._acquire()
+  File "/home/hwanhee/anaconda3/envs/atlop/lib/python3.7/site-packages/filelock.py", line 384, in _acquire
+    fd = os.open(self._lock_file, open_mode)
+PermissionError: [Errno 13] Permission denied: '/home/hwanhee/.cache/torch/transformers/c22e0b5bbb7c0cb93a87a2ae01263ae715b4c18d692b1740ce72cacaa99ad184.2d28da311092e99a05f9ee17520204614d60b0bfdb32f8a75644df7737b6a748.lock'
+During handling of the above exception, another exception occurred:
+Traceback (most recent call last):
+  File "train.py", line 228, in <module>
+    main()
+  File "train.py", line 186, in main
+    num_labels=args.num_class,
+  File "/home/hwanhee/anaconda3/envs/atlop/lib/python3.7/site-packages/transformers/configuration_auto.py", line 330, in from_pretrained
+    config_dict, _ = PretrainedConfig.get_config_dict(pretrained_model_name_or_path, **kwargs)
+  File "/home/hwanhee/anaconda3/envs/atlop/lib/python3.7/site-packages/transformers/configuration_utils.py", line 382, in get_config_dict
+    raise EnvironmentError(msg)
+OSError: Can't load config for 'roberta-large'. Make sure that:
+- 'roberta-large' is a correct model identifier listed on 'https://huggingface.co/models'
+- or 'roberta-large' is the correct path to a directory containing a config.json file

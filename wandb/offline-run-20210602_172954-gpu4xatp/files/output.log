@@ -1,0 +1,31 @@
+# of documents 3053.
+# of positive examples 35615.
+# of negative examples 1163035.
+# of documents 1000.
+# of positive examples 11518.
+# of negative examples 385272.
+# of documents 1000.
+# of positive examples 0.
+# of negative examples 392158.
+Example: 100%|████████████████████████████████████████████████████████████████████████| 3053/3053 [00:32<00:00, 92.79it/s]
+Example: 100%|████████████████████████████████████████████████████████████████████████| 1000/1000 [00:11<00:00, 84.64it/s]
+Example: 100%|████████████████████████████████████████████████████████████████████████| 1000/1000 [00:11<00:00, 90.58it/s]
+Downloading: 100%|█████████████████████████████████████████████████████████████████████| 436M/436M [00:30<00:00, 14.5MB/s]
+Traceback (most recent call last):
+  File "train.py", line 228, in <module>
+    main()
+  File "train.py", line 213, in main
+    model.to(0)
+  File "/home/hwanhee/anaconda3/envs/atlop/lib/python3.7/site-packages/torch/nn/modules/module.py", line 612, in to
+    return self._apply(convert)
+  File "/home/hwanhee/anaconda3/envs/atlop/lib/python3.7/site-packages/torch/nn/modules/module.py", line 359, in _apply
+    module._apply(fn)
+  File "/home/hwanhee/anaconda3/envs/atlop/lib/python3.7/site-packages/torch/nn/modules/module.py", line 359, in _apply
+    module._apply(fn)
+  File "/home/hwanhee/anaconda3/envs/atlop/lib/python3.7/site-packages/torch/nn/modules/module.py", line 359, in _apply
+    module._apply(fn)
+  File "/home/hwanhee/anaconda3/envs/atlop/lib/python3.7/site-packages/torch/nn/modules/module.py", line 381, in _apply
+    param_applied = fn(param)
+  File "/home/hwanhee/anaconda3/envs/atlop/lib/python3.7/site-packages/torch/nn/modules/module.py", line 610, in convert
+    return t.to(device, dtype if t.is_floating_point() else None, non_blocking)
+RuntimeError: CUDA error: out of memory

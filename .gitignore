@@ -1,3 +1,5 @@
-
+ckpt/
+dataset/
+__pycache__/
 *.json
 *.pyc

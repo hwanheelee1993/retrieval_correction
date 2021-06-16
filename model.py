@@ -1,9 +1,9 @@
 import torch
 import torch.nn as nn
 from opt_einsum import contract
-from long_seq import process_long_input
+from long_seq import process_long_input, process_input
 from losses import ATLoss
-
+from torch.nn.functional import softmax
 
 class DocREModel(nn.Module):
     def __init__(self, config, model, emb_size=768, block_size=64, num_labels=-1):
@@ -90,7 +90,7 @@ class DocREModel(nn.Module):
                 entity_pos=None,
                 hts=None,
                 instance_mask=None,
-                ):
+                is_val=False):
 
         sequence_output, attention = self.encode(input_ids, attention_mask)
         hs, rs, ts = self.get_hrt(sequence_output, attention, entity_pos, hts)
@@ -102,10 +102,15 @@ class DocREModel(nn.Module):
         bl = (b1.unsqueeze(3) * b2.unsqueeze(2)).view(-1, self.emb_size * self.block_size)
         logits = self.bilinear(bl)
 
-        output = (self.loss_fnt.get_label(logits, num_labels=self.num_labels),)
+        output = (self.loss_fnt.get_label(logits, num_labels=2),)
         if labels is not None:
             labels = [torch.tensor(label) for label in labels]
             labels = torch.cat(labels, dim=0).to(logits)
             loss = self.loss_fnt(logits.float(), labels.float())
             output = (loss.to(sequence_output),) + output
-        return output
+            
+        if(is_val):
+            probs = softmax(logits, dim=1)
+            return output, probs
+        else:
+            return output

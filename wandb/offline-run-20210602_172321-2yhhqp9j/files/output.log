@@ -1,0 +1,19 @@
+Traceback (most recent call last):
+  File "/home/hwanhee/anaconda3/envs/atlop/lib/python3.7/site-packages/transformers/configuration_utils.py", line 374, in get_config_dict
+    config_dict = cls._dict_from_json_file(resolved_config_file)
+  File "/home/hwanhee/anaconda3/envs/atlop/lib/python3.7/site-packages/transformers/configuration_utils.py", line 455, in _dict_from_json_file
+    with open(json_file, "r", encoding="utf-8") as reader:
+PermissionError: [Errno 13] Permission denied: '/home/hwanhee/.cache/torch/transformers/b945b69218e98b3e2c95acf911789741307dec43c698d35fad11c1ae28bda352.9da767be51e1327499df13488672789394e2ca38b877837e52618a67d7002391'
+During handling of the above exception, another exception occurred:
+Traceback (most recent call last):
+  File "train.py", line 228, in <module>
+    main()
+  File "train.py", line 186, in main
+    num_labels=args.num_class,
+  File "/home/hwanhee/anaconda3/envs/atlop/lib/python3.7/site-packages/transformers/configuration_auto.py", line 330, in from_pretrained
+    config_dict, _ = PretrainedConfig.get_config_dict(pretrained_model_name_or_path, **kwargs)
+  File "/home/hwanhee/anaconda3/envs/atlop/lib/python3.7/site-packages/transformers/configuration_utils.py", line 382, in get_config_dict
+    raise EnvironmentError(msg)
+OSError: Can't load config for 'bert-base-cased'. Make sure that:
+- 'bert-base-cased' is a correct model identifier listed on 'https://huggingface.co/models'
+- or 'bert-base-cased' is the correct path to a directory containing a config.json file

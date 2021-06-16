@@ -1,0 +1,9 @@
+Example:   0%|                                                                                   | 0/3053 [00:00<?, ?it/s]
+Traceback (most recent call last):
+  File "train.py", line 228, in <module>
+    main()
+  File "train.py", line 197, in main
+    train_features = read(train_file, tokenizer, max_seq_length=args.max_seq_length)
+  File "/home/hwanhee/project/correction/ATLOP/prepro.py", line 56, in read_docred
+    r = int(docred_rel2id[label['r']])
+ValueError: invalid literal for int() with base 10: 'headquarters location'

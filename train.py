@@ -1,4 +1,5 @@
 import argparse
+from prepro import read_correction
 import os
 
 import numpy as np
@@ -12,8 +13,9 @@ from model import DocREModel
 from utils import set_seed, collate_fn
 from prepro import read_docred
 from evaluation import to_official, official_evaluate
-import wandb
-
+#import wandb
+from tqdm import tqdm
+import pickle
 
 def train(args, model, train_features, dev_features, test_features):
     def finetune(features, optimizer, num_epoch, num_steps):
@@ -25,9 +27,9 @@ def train(args, model, train_features, dev_features, test_features):
         scheduler = get_linear_schedule_with_warmup(optimizer, num_warmup_steps=warmup_steps, num_training_steps=total_steps)
         print("Total steps: {}".format(total_steps))
         print("Warmup steps: {}".format(warmup_steps))
-        for epoch in train_iterator:
+        for epoch in tqdm(train_iterator):
             model.zero_grad()
-            for step, batch in enumerate(train_dataloader):
+            for step, batch in tqdm(enumerate(train_dataloader)):
                 model.train()
                 inputs = {'input_ids': batch[0].to(args.device),
                           'attention_mask': batch[1].to(args.device),
@@ -46,10 +48,12 @@ def train(args, model, train_features, dev_features, test_features):
                     scheduler.step()
                     model.zero_grad()
                     num_steps += 1
-                wandb.log({"loss": loss.item()}, step=num_steps)
+                #wandb.log({"loss": loss.item()}, step=num_steps)
                 if (step + 1) == len(train_dataloader) - 1 or (args.evaluation_steps > 0 and num_steps % args.evaluation_steps == 0 and step % args.gradient_accumulation_steps == 0):
+                    
+                    '''
                     dev_score, dev_output = evaluate(args, model, dev_features, tag="dev")
-                    wandb.log(dev_output, step=num_steps)
+                    #wandb.log(dev_output, step=num_steps)
                     print(dev_output)
                     if dev_score > best_score:
                         best_score = dev_score
@@ -58,6 +62,10 @@ def train(args, model, train_features, dev_features, test_features):
                             json.dump(pred, fh)
                         if args.save_path != "":
                             torch.save(model.state_dict(), args.save_path)
+                    '''
+                    if args.save_path != "":
+                        torch.save(model.state_dict(), args.save_path+'_'+str(epoch+1)+'_'+str(step)+'.pt')
+
         return num_steps
 
     new_layer = ["extractor", "bilinear"]
@@ -95,6 +103,8 @@ def evaluate(args, model, features, tag="dev"):
 
     preds = np.concatenate(preds, axis=0).astype(np.float32)
     ans = to_official(preds, features)
+    best_f1 = 0.0
+    best_f1_ign = 0.0
     if len(ans) > 0:
         best_f1, _, best_f1_ign, _ = official_evaluate(ans, args.data_dir)
     output = {
@@ -138,7 +148,7 @@ def main():
     parser.add_argument("--train_file", default="train_annotated.json", type=str)
     parser.add_argument("--dev_file", default="dev.json", type=str)
     parser.add_argument("--test_file", default="test.json", type=str)
-    parser.add_argument("--save_path", default="", type=str)
+    parser.add_argument("--save_path", default="./ckpt/base.pt", type=str)
     parser.add_argument("--load_path", default="", type=str)
 
     parser.add_argument("--config_name", default="", type=str,
@@ -167,7 +177,7 @@ def main():
                         help="Warm up ratio for Adam.")
     parser.add_argument("--num_train_epochs", default=30.0, type=float,
                         help="Total number of training epochs to perform.")
-    parser.add_argument("--evaluation_steps", default=-1, type=int,
+    parser.add_argument("--evaluation_steps", default=7500, type=int,
                         help="Number of training steps between evaluations.")
     parser.add_argument("--seed", type=int, default=66,
                         help="random seed for initialization")
@@ -175,7 +185,7 @@ def main():
                         help="Number of relation types in dataset.")
 
     args = parser.parse_args()
-    wandb.init(project="DocRED")
+    #wandb.init(project="DocRED")
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     args.n_gpu = torch.cuda.device_count()
@@ -189,14 +199,35 @@ def main():
         args.tokenizer_name if args.tokenizer_name else args.model_name_or_path,
     )
 
-    read = read_docred
+    read = read_correction
+    #read = read_docred
 
     train_file = os.path.join(args.data_dir, args.train_file)
     dev_file = os.path.join(args.data_dir, args.dev_file)
     test_file = os.path.join(args.data_dir, args.test_file)
-    train_features = read(train_file, tokenizer, max_seq_length=args.max_seq_length)
-    dev_features = read(dev_file, tokenizer, max_seq_length=args.max_seq_length)
-    test_features = read(test_file, tokenizer, max_seq_length=args.max_seq_length)
+    
+    train_file_p = train_file.replace('.json', 'pkl')
+    dev_file_p = dev_file.replace('.json', 'pkl')
+    #test_file_p = test_file.replace('.json', 'pkl')
+
+    if os.path.exists(train_file_p):
+        with open(train_file_p, 'rb') as f:
+            train_features = pickle.load(f)
+    else:
+        train_features = read(train_file, tokenizer, max_seq_length=args.max_seq_length)
+        with open(train_file_p, 'wb') as f:
+            pickle.dump(train_features, f)
+            
+    if os.path.exists(dev_file_p):
+        with open(dev_file_p, 'rb') as f:
+            dev_features = pickle.load(f)
+    else:
+        dev_features = read(dev_file, tokenizer, max_seq_length=args.max_seq_length)
+        with open(dev_file_p, 'wb') as f:
+            pickle.dump(dev_features, f)
+            
+    test_features = dev_features
+    
 
     model = AutoModel.from_pretrained(
         args.model_name_or_path,
