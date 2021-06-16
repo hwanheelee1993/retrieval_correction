@@ -206,8 +206,8 @@ def main():
     dev_file = os.path.join(args.data_dir, args.dev_file)
     test_file = os.path.join(args.data_dir, args.test_file)
     
-    train_file_p = train_file.replace('.json', 'pkl')
-    dev_file_p = dev_file.replace('.json', 'pkl')
+    train_file_p = train_file.replace('.json', '.pkl')
+    dev_file_p = dev_file.replace('.json', '.pkl')
     #test_file_p = test_file.replace('.json', 'pkl')
 
     if os.path.exists(train_file_p):
