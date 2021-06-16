@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # ATLOP
 Code for AAAI 2021 paper [Document-Level Relation Extraction with Adaptive Thresholding and Localized Context Pooling](https://arxiv.org/abs/2010.11304).
 
@@ -69,3 +70,6 @@ The training loss and evaluation results on the dev and test set are synced to t
 
 ## Saving and Evaluating Models
 You can save the model by setting the `--save_path` argument before training. The model correponds to the best dev results will be saved. After that, You can evaluate the saved model by setting the `--load_path` argument, then the code will skip training and evaluate the saved model on benchmarks. I've also released the trained `atlop-bert-base` and `atlop-roberta` models.
+=======
+# summary_correction
+>>>>>>> d784b309057e5ea420806b16acd1a0d7e0b840a9
